@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Full-stack TypeScript monorepo managed as Bun workspaces (`client`, `server`), no shared package between them. All source and UI text must be written in English.
+**Tickly** is a full-stack TypeScript monorepo managed as Bun workspaces (`client`, `server`), no shared package between them. All source and UI text must be written in English.
 
 ## Tech stack
 
