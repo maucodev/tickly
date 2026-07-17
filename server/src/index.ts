@@ -1,11 +1,14 @@
 import cors from "cors";
 import express, { type Request, type Response, type NextFunction } from "express";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth";
 import { prisma } from "./lib/prisma";
 
 const app = express();
 const port = process.env.PORT ?? 3001;
 
 app.use(cors());
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 app.use(express.json());
 
 app.get("/api/health", (_req: Request, res: Response) => {
