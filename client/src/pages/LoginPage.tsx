@@ -12,6 +12,8 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>
 
+const SERVER_UNREACHABLE_MESSAGE = 'Unable to reach the server. Please try again later.'
+
 const errorClass =
   'rounded-md border border-red-600/30 bg-red-600/10 px-3 py-2 text-sm text-red-600 dark:border-red-400/40 dark:bg-red-400/10 dark:text-red-400'
 
@@ -45,14 +47,19 @@ export default function LoginPage() {
   const onSubmit = async ({ email, password }: LoginFormValues) => {
     setError(null)
 
-    const { error: signInError } = await authClient.signIn.email({ email, password })
+    try {
+      const { error: signInError } = await authClient.signIn.email({ email, password })
 
-    if (signInError) {
-      setError(signInError.message ?? 'Invalid email or password')
-      return
+      if (signInError) {
+        const isServerError = !signInError.status || signInError.status >= 500
+        setError(isServerError ? SERVER_UNREACHABLE_MESSAGE : (signInError.message ?? 'Invalid email or password'))
+        return
+      }
+
+      navigate('/', { replace: true })
+    } catch {
+      setError(SERVER_UNREACHABLE_MESSAGE)
     }
-
-    navigate('/', { replace: true })
   }
 
   return (
