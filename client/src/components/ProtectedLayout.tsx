@@ -1,13 +1,16 @@
 import { Navigate, Outlet } from 'react-router-dom'
 import { useSession } from '../lib/auth-client'
 import NavBar from './NavBar'
-import './ProtectedLayout.css'
 
 export default function ProtectedLayout() {
   const { data, isPending } = useSession()
 
   if (isPending) {
-    return <div className="page-loading">Loading…</div>
+    return (
+      <div className="flex flex-grow items-center justify-center text-neutral-500 dark:text-neutral-400">
+        Loading…
+      </div>
+    )
   }
 
   if (!data) {
@@ -17,7 +20,7 @@ export default function ProtectedLayout() {
   return (
     <>
       <NavBar user={data.user} />
-      <main className="page-content">
+      <main className="flex flex-grow flex-col">
         <Outlet />
       </main>
     </>
