@@ -1,15 +1,29 @@
-import { useState, type FormEvent } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router-dom'
+import { z } from 'zod'
 import { authClient, useSession } from '../lib/auth-client'
 import './LoginPage.css'
+
+const loginSchema = z.object({
+  email: z.email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+})
+
+type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const { data, isPending } = useSession()
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
-  const [submitting, setSubmitting] = useState(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+  })
 
   if (isPending) {
     return <div className="page-loading">Loading…</div>
@@ -19,14 +33,10 @@ export default function LoginPage() {
     return <Navigate to="/" replace />
   }
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async ({ email, password }: LoginFormValues) => {
     setError(null)
-    setSubmitting(true)
 
     const { error: signInError } = await authClient.signIn.email({ email, password })
-
-    setSubmitting(false)
 
     if (signInError) {
       setError(signInError.message ?? 'Invalid email or password')
@@ -38,7 +48,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleSubmit(onSubmit)} noValidate>
         <h1>Tickly</h1>
         <h2>Sign in</h2>
         {error && <p className="login-error">{error}</p>}
@@ -46,23 +56,21 @@ export default function LoginPage() {
         <input
           id="email"
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
           autoComplete="username"
-          required
           autoFocus
+          {...register('email')}
         />
+        {errors.email && <p className="login-error">{errors.email.message}</p>}
         <label htmlFor="password">Password</label>
         <input
           id="password"
           type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
           autoComplete="current-password"
-          required
+          {...register('password')}
         />
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Signing in…' : 'Sign in'}
+        {errors.password && <p className="login-error">{errors.password.message}</p>}
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Signing in…' : 'Sign in'}
         </button>
       </form>
     </div>
