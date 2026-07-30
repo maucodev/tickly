@@ -1,5 +1,8 @@
+import { LogOutIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { authClient } from '../lib/auth-client'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { authClient } from '@/lib/auth-client'
 
 type NavBarProps = {
   user: {
@@ -7,6 +10,15 @@ type NavBarProps = {
     email: string
     image?: string | null
   }
+}
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('')
 }
 
 export default function NavBar({ user }: NavBarProps) {
@@ -21,17 +33,18 @@ export default function NavBar({ user }: NavBarProps) {
   }
 
   return (
-    <nav className="flex items-center justify-between border-b border-neutral-200 px-8 py-4 dark:border-neutral-800">
-      <span className="text-xl font-semibold text-neutral-900 dark:text-neutral-100">Tickly</span>
+    <nav className="flex items-center justify-between border-b px-8 py-4">
+      <span className="text-xl font-semibold">Tickly</span>
       <div className="flex items-center gap-3">
-        <span className="font-medium text-neutral-900 dark:text-neutral-100">{user.name}</span>
-        <button
-          type="button"
-          className="cursor-pointer rounded-md border border-neutral-200 bg-transparent px-3.5 py-1.5 text-neutral-500 transition-colors hover:border-purple-500/50 hover:text-purple-600 dark:border-neutral-800 dark:text-neutral-400 dark:hover:border-purple-400/50 dark:hover:text-purple-400"
-          onClick={handleLogout}
-        >
+        <Avatar>
+          {user.image && <AvatarImage src={user.image} alt={user.name} />}
+          <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+        </Avatar>
+        <span className="font-medium">{user.name}</span>
+        <Button type="button" variant="outline" onClick={handleLogout}>
+          <LogOutIcon />
           Log out
-        </button>
+        </Button>
       </div>
     </nav>
   )

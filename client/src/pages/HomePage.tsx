@@ -1,14 +1,17 @@
-import { useSession } from '../lib/auth-client'
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useSession } from '@/lib/auth-client'
 
 export default function HomePage() {
   const { data } = useSession()
 
   return (
-    <section className="p-8 text-left">
-      <h1 className="my-8 text-4xl font-medium tracking-tight text-neutral-900 md:text-6xl dark:text-neutral-100">
-        Welcome{data?.user?.name ? `, ${data.user.name}` : ''}
-      </h1>
-      <p className="text-neutral-500 dark:text-neutral-400">This is your Tickly dashboard.</p>
+    <section className="flex flex-grow flex-col p-8">
+      <Card className="max-w-2xl">
+        <CardHeader>
+          <CardTitle className="text-2xl">Welcome{data?.user?.name ? `, ${data.user.name}` : ''}</CardTitle>
+          <CardDescription>This is your Tickly dashboard.</CardDescription>
+        </CardHeader>
+      </Card>
     </section>
   )
 }
