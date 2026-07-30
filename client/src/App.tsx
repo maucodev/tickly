@@ -1,28 +1,17 @@
-import { useEffect, useState } from 'react'
-import './App.css'
-
-type Health = { status: string }
+import { Navigate, Route, Routes } from 'react-router-dom'
+import ProtectedLayout from './components/ProtectedLayout'
+import HomePage from './pages/HomePage'
+import LoginPage from './pages/LoginPage'
 
 function App() {
-  const [health, setHealth] = useState<Health | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => res.json())
-      .then(setHealth)
-      .catch(() => setError('Could not connect to the server'))
-  }, [])
-
   return (
-    <main style={{ fontFamily: 'sans-serif', padding: '2rem' }}>
-      <h1>Helpdesk</h1>
-      <p>Express + React + TypeScript + Bun</p>
-      <p>
-        Server status:{' '}
-        {error ? error : health ? health.status : 'loading...'}
-      </p>
-    </main>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route element={<ProtectedLayout />}>
+        <Route path="/" element={<HomePage />} />
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 

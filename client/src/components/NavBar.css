@@ -1,0 +1,43 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border);
+}
+
+.navbar-brand {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 20px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-user-name {
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.navbar-logout {
+  font: inherit;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.navbar-logout:hover {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
